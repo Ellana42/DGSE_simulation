@@ -3,7 +3,7 @@ title: "Confidence collapse in a multihousehold, self-reflexive DSGE model"
 date: "5/9/2020"
 output: 
     epuRate::epurate:
-        toc: TRUE
+        toc: FALSE
         number_sections: FALSE
         code_folding: "show"
 ---
@@ -11,14 +11,86 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-# Résumé de l'article
-# Schéma explicatif, simulation numérique ou graphe
+# {.tabset .tabset-fade .tabset-pills}
+## Résumé de l'article
+## Schéma explicatif
+## Simulation numérique
 
 <!-- Réalisation d’un schéma explicatif, d’une petite simulation numérique illustrative, ou d’un graphe à partir de données présentées dans l’article. 5pts -->
+On importe les package nécessaires
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+from math import exp, log
+import seaborn as sns
+```
+
+Choix des constantes (celles prises par les auteurs pour leurs simulations empiriques) :
+
+```{python}
+theta = 5
+sigma = 0.6
+heta = 0.5
+c_min = 0.1
+c_max = 5.1
+
+zeta_0 = 0
+
+c_0s = [0.1, 0.55, 0.75, 1.05]
+```
+
+On implémente les fonctions de passage d'un état à l'autre : 
+```{python}
+def next_log_prod(current_log_prod):
+    return heta * current_log_prod + np.sqrt(1 - heta ** 2) * np.random.normal(0, 1)
 
 
+def g(conso):
+    return c_min + (c_max - c_min) / (1 + exp(2 * theta * (c_0 - conso)))
 
 
-# Relation avec le cours
-# Regard critique
+def next_conso(current_conso, current_log_prod):
+    return exp(next_log_prod(current_log_prod)) * g(current_conso), next_log_prod(current_log_prod)
+```
+
+On calcule les états successifs afin des les afficher : 
+
+```{python, results=FALSE}
+current_log_prod = zeta_0
+
+iterations = range(1000)
+i = 0
+
+plt.style.use('ggplot')
+fig, axs = plt.subplots(len(c_0s), 2, gridspec_kw={'width_ratios': [3, 1]}, figsize=(25, 15))
+
+for c_0 in c_0s:
+
+    current_conso = c_0
+    consos = []
+
+    for _ in iterations:
+        consos.append(log(current_conso))
+        current_conso, current_log_prod = next_conso(
+            current_conso, current_log_prod)
+
+    axs[i, 0].plot(consos, linewidth=1)
+    axs[i, 0].plot([log(c_0) for _ in iterations], '--', label='x0', color='c')
+    axs[i, 0].set_ylabel('c0 : ' + str(c_0))
+    axs[i, 0].legend()
+
+    sns.distplot(consos, ax=axs[i, 1], color='lightblue', hist=False)
+    axs[i, 1].axvline(log(c_0), ls='--', label='x0', color='c')
+    axs[i, 1].legend()
+
+    i += 1
+```
+
+```{python, fig.width=100, fig.height=100}
+plt.show()
+```
+
+
+## Relation avec le cours
+## Regard critique

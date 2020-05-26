@@ -14,22 +14,21 @@ c_max = 5.1
 c_0s = [0.1, 0.55, 0.75, 1.05]
 
 
-def next_error(current_error):
-    return heta * current_error + np.sqrt(1 - heta ** 2) * np.random.normal(0, 1)
+def next_log_prod(current_log_prod):
+    return heta * current_log_prod + np.sqrt(1 - heta ** 2) * np.random.normal(0, 1)
 
 
 def g(conso):
     return c_min + (c_max - c_min) / (1 + exp(2 * theta * (c_0 - conso)))
 
 
-def next_conso(current_conso, current_error):
-    return exp(next_error(current_error)) * g(current_conso), next_error(current_error)
+def next_conso(current_conso, current_log_prod):
+    return exp(next_log_prod(current_log_prod)) * g(current_conso), next_log_prod(current_log_prod)
 
 
-# How do I define those ???
 zeta_0 = 0
 
-current_error = zeta_0
+current_log_prod = zeta_0
 
 iterations = range(1000)
 i = 0
@@ -45,10 +44,10 @@ for c_0 in c_0s:
 
     for _ in iterations:
         consos.append(log(current_conso))
-        current_conso, current_error = next_conso(current_conso, current_error)
+        current_conso, current_log_prod = next_conso(
+            current_conso, current_log_prod)
 
-    axs[i, 0].plot(consos)
-    # axs[i, 0].plot(log(c_0), color='darkblue')
+    axs[i, 0].plot(consos, linewidth=1)
     axs[i, 0].plot([log(c_0) for _ in iterations], '--', label='x0', color='c')
     axs[i, 0].set_ylabel('c0 : ' + str(c_0))
     axs[i, 0].legend()
