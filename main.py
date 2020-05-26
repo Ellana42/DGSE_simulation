@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import exp, log
+import seaborn as sns
 
 # constants
 theta = 5
@@ -34,7 +35,7 @@ iterations = range(1000)
 i = 0
 
 plt.style.use('ggplot')
-fig, axs = plt.subplots(len(c_0s), 1)
+fig, axs = plt.subplots(len(c_0s), 2, gridspec_kw={'width_ratios': [3, 1]})
 fig.suptitle('Numeric simulation')
 
 for c_0 in c_0s:
@@ -46,8 +47,16 @@ for c_0 in c_0s:
         consos.append(log(current_conso))
         current_conso, current_error = next_conso(current_conso, current_error)
 
-    axs[i].plot(consos)
-    axs[i].set_ylabel('c0 : ' + str(c_0))
+    axs[i, 0].plot(consos)
+    # axs[i, 0].plot(log(c_0), color='darkblue')
+    axs[i, 0].plot([log(c_0) for _ in iterations], '--', label='x0', color='c')
+    axs[i, 0].set_ylabel('c0 : ' + str(c_0))
+    axs[i, 0].legend()
+
+    sns.distplot(consos, ax=axs[i, 1], color='lightblue', hist=False)
+    axs[i, 1].axvline(log(c_0), ls='--', label='x0', color='c')
+    axs[i, 1].legend()
+
     i += 1
 
 plt.show()
