@@ -1,0 +1,24 @@
+---
+title: "Confidence collapse in a multihousehold, self-reflexive DSGE model"
+date: "5/9/2020"
+output: 
+    epuRate::epurate:
+        toc: TRUE
+        number_sections: FALSE
+        code_folding: "show"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Résumé de l'article
+# Schéma explicatif, simulation numérique ou graphe
+
+<!-- Réalisation d’un schéma explicatif, d’une petite simulation numérique illustrative, ou d’un graphe à partir de données présentées dans l’article. 5pts -->
+
+
+
+
+# Relation avec le cours
+# Regard critique
